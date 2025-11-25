@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/property-functions"
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+
+cmd-compose-set-compose-path() {
+  declare desc="Set the path to a compose.yml file"
+  declare cmd="compose:set-compose-path"
+  [[ "$1" == "$cmd" ]] && shift 1 
+
+  declare APP="$1"
+  declare COMPOSE_PATH="$2"
+
+  verify_app_name "$APP"
+  config_set --no-restart $APP DOKKU_COMPOSE_PATH=$COMPOSE_PATH
+}

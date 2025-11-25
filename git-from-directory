@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+source "$PLUGIN_AVAILABLE_PATH/compose/internal-functions"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/property-functions"
+
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+
+trigger-compose-git-from-directory() {
+  declare APP="$1" WORK_DIR="$2"
+  SOURCE_IMAGE=$(fn-plugin-property-get "git" "$APP" "source-image")
+
+
+  # Check if we're building from an image or from source
+  # fn-plugin-property-get "git" "$APP" "source-image" ?
+  echo "=== compose: git-from-directory"
+  echo "DOKKU_COMPOSE_PATH: $DOKKU_COMPOSE_PATH"
+  echo "APP: $APP"
+  echo "SOURCE_IMAGE: $SOURCE_IMAGE"
+  echo "Dockerfile contents:"
+  cat $WORK_DIR/Dockerfile
+
+  echo "=== compose: git-from-directory"
+}
+
+trigger-compose-git-from-directory "$@"
