@@ -73,6 +73,9 @@ fn-compose-from-repo() {
 
 fn-compose-set-resources() {
   declare APP="$1" IMAGE="$2" COMPOSE_PATH="$3"
+  TMP_COMPOSE_PATH="/tmp/$APP-compose.yml"
 
-  "$PLUGIN_AVAILABLE_PATH/compose/bin/set-resources-from-compose"
+  "$DOCKER_BIN" run --rm "$IMAGE" cat "$COMPOSE_PATH" > "$TMP_COMPOSE_PATH"
+
+  "$PLUGIN_AVAILABLE_PATH/compose/bin/set-resources-from-compose" "$APP" "$TMP_COMPOSE_PATH"
 }
