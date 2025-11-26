@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+
+require "yaml"
+require_relative "../lib/dokku/common"
+
+class DokkuResourceSetter
+  include Dokku::Common
+
+  def self.call(...)
+    new.call(...)
+  end
+
+  def call(app_name, compose_file_path)
+    compose_config = YAML.load(File.read(compose_file_path))
+
+    compose_config["services"].each do |service_name, service_config|
+      cpu_limit = service_config.dig("deploy", "resources", "limits", "cpus")
+      mem_limit = service_config.dig("deploy", "resources", "limits", "memory")
+
+      update_resource(app_name, service_name, "cpu", cpu_limit)
+      update_resource(app_name, service_name, "memory", mem_limit)
+    end
+  end
+
+  private def update_resource(app_name, process_type, resource, value)
+    property       = property_key(process_type, "limit", resource)
+    set_by_compose = common.property_get("compose", app_name, property)
+    
+    # Clear the resource if it's not specified in the compose file
+    # but was previously set by the compose file.
+    common.property_delete("resource", app_name, property) if value.nil? && !set_by_compose.empty?
+
+    return if value.nil?
+
+    common.property_write("resource", app_name, property, value)
+  end
+
+  private def property_key(process_type, resource_type, key) = "#{process_type}.#{resource_type}.#{key}"
+end
+
+DokkuResourceSetter.call(*ARGV)

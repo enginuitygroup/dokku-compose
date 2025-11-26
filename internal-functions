@@ -51,3 +51,9 @@ fn-compose-from-repo() {
   dokku_log_info1_quiet "[compose] Generating Procfile"
   "$PLUGIN_AVAILABLE_PATH/compose/bin/procfile-from-compose" "$WORK_COMPOSE_PATH" "$WORK_DIR/Procfile"
 }
+
+fn-compose-set-resources() {
+  declare APP="$1" IMAGE="$2" COMPOSE_PATH="$3"
+
+  "$PLUGIN_AVAILABLE_PATH/compose/bin/set-resources-from-compose"
+}

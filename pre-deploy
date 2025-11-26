@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/compose/internal-functions"
+
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+
+trigger-compose-pre-deploy() {
+  declare APP="$1" IMAGE_TAG="$2"
+  IMAGE=$(get_app_image_name "$APP" "$IMAGE_TAG")
+  COMPOSE_PATH=$(fn-find-compose-path "$APP")
+
+  fn-compose-set-resources "$APP" "$IMAGE" "$COMPOSE_PATH"
+
+}
+
+trigger-compose-pre-deploy "$@"
