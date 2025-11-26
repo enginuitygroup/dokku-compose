@@ -29,7 +29,7 @@ fn-compose-from-image() {
 
   [[ -f "$WORK_COMPOSE_PATH" ]] || mkdir -p $(dirname $WORK_COMPOSE_PATH)
 
-  copy_from_image "$SOURCE_IMAGE" "$COMPOSE_PATH" "$WORK_COMPOSE_PATH"
+  "$DOCKER_BIN" run --rm "$SOURCE_IMAGE" cat "$COMPOSE_PATH" > "$WORK_COMPOSE_PATH"
   
   fn-compose-from-repo "$WORK_DIR" "$WORK_COMPOSE_PATH"
 
