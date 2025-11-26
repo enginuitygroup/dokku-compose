@@ -32,5 +32,13 @@ cmd-compose-report() {
   APP_COMPOSE_PATH=$(fn-plugin-property-get "compose" "$APP" "compose-path")
   echo "App $APP compose path: $APP_COMPOSE_PATH"
 
+  APP_JSON_CREATED=$(fn-plugin-property-get "compose" "$APP" "app-json")
+  echo "App $APP using generated app.json: ${APP_JSON_CREATED:-false}"
+
+  PROCFILE_CREATED=$(fn-plugin-property-get "compose" "$APP" "procfile")
+  echo "App $APP using generated Procfile: ${PROCFILE_CREATED:-false}"
+  
+  # TODO: Report on resource settings.
+  
   exit 0
 }
