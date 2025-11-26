@@ -24,7 +24,7 @@ class DokkuAppJsonGenerator
     File.write(output_path, JSON.dump(app_json_contents))
   end
 
-  private def self.configure_healthchecks(app_json, service_name, service_config)
+  private def configure_healthchecks(app_json, service_name, service_config)
     return app_json unless service_config.key?("healthcheck")
     
     app_json[:healthchecks] ||= {}
@@ -45,7 +45,7 @@ class DokkuAppJsonGenerator
     app_json.merge(healthchecks: app_json[:healthchecks].merge(service_name => app_json_service_config))
   end
 
-  private def self.configure_formation(app_json, service_name, service_config)
+  private def configure_formation(app_json, service_name, service_config)
     return app_json unless service_config.key?("deploy")
       
     app_json[:formation] ||= {}
