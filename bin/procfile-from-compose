@@ -7,15 +7,19 @@ class DokkuProcfileGenerator
   def self.call(compose_file_path, output_path = "Procfile")
     compose_config = YAML.load(File.read(compose_file_path))
 
-    procfile_hash = compose_config.fetch("x-dokku-procfile", {})
+    procfile_hash = compose_config.dig("x-dokku", "procfile") || {}
 
     compose_config["services"].each do |service_name, service_config|
       procfile_hash[service_name] = service_config["command"]
     end
 
-    procfile_contents = procfile_hash.map { |k, v| "#{k}: #{v}" }
+    procfile_contents = procfile_hash.compact.map { |k, v| "#{k}: #{v}" }
 
-    File.write(output_path, procfile_contents)
+    if procfile_contents.empty?
+      puts "--> No usable Procfile built from #{compose_file_path}, skipping..."
+    else
+      File.write(output_path, procfile_contents.join("\n"))
+    end
   end
 end
 

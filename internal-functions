@@ -20,8 +20,8 @@ fn-compose-from-repo() {
   declare WORK_DIR="$1" WORK_COMPOSE_PATH="$2"
 
   dokku_log_info1_quiet "[compose] Generating app.json"
-  "$PLUGIN_AVAILABLE_PATH/compose/app-json-from-compose" "$WORK_COMPOSE_PATH" "$WORK_DIR/app.json"
+  "$PLUGIN_AVAILABLE_PATH/compose/bin/app-json-from-compose" "$WORK_COMPOSE_PATH" "$WORK_DIR/app.json"
 
   dokku_log_info1_quiet "[compose] Generating Procfile"
-  "$PLUGIN_AVAILABLE_PATH/compose/procfile-from-compose" "$WORK_COMPOSE_PATH" "$WORK_DIR/Procfile"
+  "$PLUGIN_AVAILABLE_PATH/compose/bin/procfile-from-compose" "$WORK_COMPOSE_PATH" "$WORK_DIR/Procfile"
 }

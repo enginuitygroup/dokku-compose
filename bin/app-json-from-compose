@@ -5,6 +5,7 @@ require "bundler/inline"
 
 require "yaml"
 require "json"
+require "debug"
 
 class DokkuAppJsonGenerator
   def self.call(...)
@@ -14,14 +15,19 @@ class DokkuAppJsonGenerator
   def call(compose_file_path, output_path = "app.json")
     compose_config = YAML.load(File.read(compose_file_path))
 
-    app_json_contents = compose_config.fetch("x-dokku-app-json", {})
+    app_json_contents = compose_config.dig("x-dokku", "app-json") || {}
 
-    compose_config["services"].inject(app_json_contents) do |memo, service_name, service_config|
+    app_json_contents = compose_config["services"].inject(app_json_contents) do |memo, (service_name, service_config)|
       memo = configure_healthchecks(memo, service_name, service_config)
       configure_formation(memo, service_name, service_config)
     end
 
-    File.write(output_path, JSON.dump(app_json_contents))
+    if app_json_contents.empty?
+      puts "--> No usable app.json built from #{compose_file_path}, skipping..."
+    else
+      File.write(output_path, JSON.dump(app_json_contents))
+    end
+    
   end
 
   private def configure_healthchecks(app_json, service_name, service_config)
@@ -30,16 +36,16 @@ class DokkuAppJsonGenerator
     app_json[:healthchecks] ||= {}
 
     app_json_service_config = {
-      type:         service_config.dig("healthcheck", "x-dokku-type") || "startup",
+      type:         service_config.dig("healthcheck", "x-dokku", "type") || "startup",
       command:      service_config.dig("healthcheck", "test"),
       attempts:     service_config.dig("healthcheck", "retries"),
       initialDelay: service_config.dig("healthcheck", "interval"),
       timeout:      service_config.dig("healthcheck", "timeout"),
       wait:         service_config.dig("healthcheck", "interval"),
-      httpHeaders:  service_config.dig("healthcheck", "x-dokku-http-headers"),
-      path:         service_config.dig("healthcheck", "x-dokku-path"),
-      port:         service_config.dig("healthcheck", "x-dokku-port"),
-      scheme:       service_config.dig("healthcheck", "x-dokku-scheme")
+      httpHeaders:  service_config.dig("healthcheck", "x-dokku", "http-headers"),
+      path:         service_config.dig("healthcheck", "x-dokku", "path"),
+      port:         service_config.dig("healthcheck", "x-dokku", "port"),
+      scheme:       service_config.dig("healthcheck", "x-dokku", "scheme")
     }.compact
 
     app_json.merge(healthchecks: app_json[:healthchecks].merge(service_name => app_json_service_config))
