@@ -8,28 +8,13 @@ set -eo pipefail
 trigger-compose-git-from-directory() {
   declare APP="$1" WORK_DIR="$2"
   SOURCE_IMAGE=$(fn-plugin-property-get "git" "$APP" "source-image")
-  COMPOSE_PATH=$(fn-plugin-property-get "compose" "$APP" "compose-path")
+  COMPOSE_PATH=$(fn-find-compose-path "$APP")
 
   if [[ "$SOURCE_IMAGE" != "" ]]; then
     fn-compose-from-image "$WORK_DIR" "$SOURCE_IMAGE" "$COMPOSE_PATH"
   else
     fn-compose-from-repo "$WORK_DIR" "$COMPOSE_PATH"
   fi
-
-
-  # Check if we're building from an image or from source
-  # fn-plugin-property-get "git" "$APP" "source-image" ?
-  echo "=== compose: git-from-directory"
-  echo "COMPOSE_PATH: $COMPOSE_PATH"
-  echo "APP: $APP"
-  echo "SOURCE_IMAGE: $SOURCE_IMAGE"
-  echo "Dockerfile contents:"
-  cat $WORK_DIR/Dockerfile
-
-  echo "compose contents:"
-  cat $WORK_DIR/$COMPOSE_PATH
-
-  echo "=== compose: git-from-directory"
 }
 
 trigger-compose-git-from-directory "$@"

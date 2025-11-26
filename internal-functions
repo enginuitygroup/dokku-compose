@@ -3,6 +3,26 @@ source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
+fn-find-compose-path() {
+  declare APP="$1"
+  COMMON_COMPOSE_PATHS="docker-compose.yml docker-compose.yaml compose.yml compose.yaml"
+  COMPOSE_PATH=$(fn-plugin-property-get "compose" "$APP" "compose-path")
+
+  if [[ "$COMPOSE_PATH" != "" ]]; then
+    echo $COMPOSE_PATH
+    exit 0
+  fi
+
+  for compose_path in $COMMON_COMPOSE_PATHS; do
+    if [[ -f "$compose_path" ]]; then
+      echo $compose_path
+      exit 0
+    fi
+  done
+
+  dokku_log_info1_quiet "No compose file found; no app.json or Procfile will be generated"
+}
+
 fn-compose-from-image() {
   declare WORK_DIR="$1" SOURCE_IMAGE="$2" COMPOSE_PATH="$3"
   WORK_COMPOSE_PATH=$WORK_DIR/$COMPOSE_PATH
