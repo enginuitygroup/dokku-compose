@@ -6,10 +6,16 @@ set -eo pipefail
 fn-find-compose-path() {
   declare APP="$1"
   COMMON_COMPOSE_PATHS="docker-compose.yml docker-compose.yaml compose.yml compose.yaml"
+  GLOBAL_COMPOSE_PATH=$(fn-plugin-property-get "compose" "--global" "compose-path")
   COMPOSE_PATH=$(fn-plugin-property-get "compose" "$APP" "compose-path")
 
   if [[ "$COMPOSE_PATH" != "" ]]; then
     echo $COMPOSE_PATH
+    exit 0
+  fi
+
+  if [[ "$GLOBAL_COMPOSE_PATH" != "" ]]; then
+    echo $GLOBAL_COMPOSE_PATH
     exit 0
   fi
 
