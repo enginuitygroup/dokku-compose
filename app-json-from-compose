@@ -7,7 +7,11 @@ require "yaml"
 require "json"
 
 class DokkuAppJsonGenerator
-  def self.call(compose_file_path, output_path = "app.json")
+  def self.call(...)
+    new.call(...)
+  end
+
+  def call(compose_file_path, output_path = "app.json")
     compose_config = YAML.load(File.read(compose_file_path))
 
     app_json_contents = compose_config.fetch("x-dokku-app-json", {})
@@ -52,26 +56,6 @@ class DokkuAppJsonGenerator
     }
 
     app_json.merge(formation: app_json[:formation].merge(service_name => app_json_service_config))
-  end
-
-  private def app_json_schema 
-    @app_json_schema ||= Dry::Schema.JSON do
-      optional(:cron).array(:hash) do
-        required(:command).filled(:string)
-        required(:schedule).filled(:string)
-        optional(:maintenance).value(type?: Boolean)
-        optional(:concurrency_policy).value(included_in?: %w(allow forbid replace))
-      end
-
-      optional(:scripts).hash do
-        optional(:dokku).hash do
-          optional(:predeploy).filled(:string)
-          optional(:postdeploy).filled(:string)
-        end
-
-        optional(:postdeploy).filled(:string)
-      end
-    end
   end
 end
 
