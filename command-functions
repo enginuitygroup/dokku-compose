@@ -24,12 +24,12 @@ cmd-compose-report() {
 
   declare APP="$1"
 
-  GLOBAL_COMPOSE_PATH=$(fn-plugin-property-read "compose" "--global" "compose-path")
+  GLOBAL_COMPOSE_PATH=$(fn-plugin-property-get "compose" "--global" "compose-path")
   echo "Global compose path: $GLOBAL_COMPOSE_PATH"
 
   [[ -z "$APP" ]] && exit 0
 
-  APP_COMPOSE_PATH=$(fn-plugin-property-read "compose" "$APP" "compose-path")
+  APP_COMPOSE_PATH=$(fn-plugin-property-get "compose" "$APP" "compose-path")
   echo "App $APP compose path: $APP_COMPOSE_PATH"
 
   exit 0
