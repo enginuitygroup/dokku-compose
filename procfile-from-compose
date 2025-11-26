@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "yaml"
+
+class DokkuProcfileGenerator
+  def self.call(compose_file_path, output_path = "Procfile")
+    compose_config = YAML.load(File.read(compose_file_path))
+
+    procfile_hash = compose_config.fetch("x-dokku-procfile", {})
+
+    compose_config["services"].each do |service_name, service_config|
+      procfile_hash[service_name] = service_config["command"]
+    end
+
+    procfile_contents = procfile_hash.map { |k, v| "#{k}: #{v}" }
+
+    File.write(output_path, procfile_contents)
+  end
+end
+
+DokkuProcfileGenerator.call(*ARGV)

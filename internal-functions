@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+
+fn-compose-from-image() {
+  declare WORK_DIR="$1" SOURCE_IMAGE="$2" COMPOSE_PATH="$3"
+  WORK_COMPOSE_PATH=$WORK_DIR/$COMPOSE_PATH
+
+  [[ -f "$WORK_COMPOSE_PATH" ]] || mkdir -p $(dirname $WORK_COMPOSE_PATH)
+
+  copy_from_image "$SOURCE_IMAGE" "$COMPOSE_PATH" "$WORK_COMPOSE_PATH"
+  
+  fn-compose-from-repo "$WORK_DIR" "$COMPOSE_PATH"
+
+  echo "COPY app.json Procfile ." >> "$WORK_DIR/Dockerfile"
+}
+
+fn-compose-from-repo() {
+  declare WORK_DIR="$1" COMPOSE_PATH="$2"
+
+  dokku_log_info1_quiet "[compose] Generating app.json"
+  "$PLUGIN_AVAILABLE_PATH/compose/app-json-from-compose" "$COMPOSE_PATH" "$WORK_DIR/app.json"
+
+  dokku_log_info1_quiet "[compose] Generating Procfile"
+  "$PLUGIN_AVAILABLE_PATH/compose/procfile-from-compose" "$COMPOSE_PATH" "$WORK_DIR/Procfile"
+}
