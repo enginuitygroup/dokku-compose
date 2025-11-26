@@ -17,4 +17,4 @@ trigger-compose-git-from-directory() {
   fi
 }
 
-trigger-compose-git-from-directory "$@"
+trigger-compose-git-from-directory "$@"l
