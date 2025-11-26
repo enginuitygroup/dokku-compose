@@ -12,6 +12,6 @@ cmd-compose-set-compose-path() {
   declare APP="$1"
   declare COMPOSE_PATH="$2"
 
-  verify_app_name "$APP"
+  [[ "$APP" != "--global" ]] && verify_app_name "$APP"
   fn-plugin-property-write "compose" "$APP" "$COMPOSE_PATH"
 }
