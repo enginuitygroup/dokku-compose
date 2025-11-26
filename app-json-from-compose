@@ -3,10 +3,6 @@
 
 require "bundler/inline"
 
-gemfile do
-  gem "dry-schema"
-end
-
 require "yaml"
 require "json"
 
@@ -14,7 +10,7 @@ class DokkuAppJsonGenerator
   def self.call(compose_file_path, output_path = "app.json")
     compose_config = YAML.load(File.read(compose_file_path))
 
-    app_json_contents = app_json_schema.call(compose_config.fetch("x-dokku-app-json", {}))
+    app_json_contents = compose_config.fetch("x-dokku-app-json", {})
 
     compose_config["services"].inject(app_json_contents) do |memo, service_name, service_config|
       memo = configure_healthchecks(memo, service_name, service_config)
@@ -24,7 +20,7 @@ class DokkuAppJsonGenerator
     File.write(output_path, JSON.dump(app_json_contents))
   end
 
-  private def configure_healthchecks(app_json, service_name, service_config)
+  private def self.configure_healthchecks(app_json, service_name, service_config)
     return app_json unless service_config.key?("healthcheck")
     
     app_json[:healthchecks] ||= {}
@@ -45,7 +41,7 @@ class DokkuAppJsonGenerator
     app_json.merge(healthchecks: app_json[:healthchecks].merge(service_name => app_json_service_config))
   end
 
-  private def configure_formation(app_json, service_name, service_config)
+  private def self.configure_formation(app_json, service_name, service_config)
     return app_json unless service_config.key?("deploy")
       
     app_json[:formation] ||= {}

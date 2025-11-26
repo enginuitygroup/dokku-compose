@@ -10,7 +10,7 @@ trigger-compose-git-from-directory() {
   SOURCE_IMAGE=$(fn-plugin-property-get "git" "$APP" "source-image")
   COMPOSE_PATH=$(fn-plugin-property-get "compose" "$APP" "compose-path")
 
-  if [[ "$SOURCE_IMAGE" -ne "" ]]; then
+  if [[ "$SOURCE_IMAGE" != "" ]]; then
     fn-compose-from-image "$WORK_DIR" "$SOURCE_IMAGE" "$COMPOSE_PATH"
   else
     fn-compose-from-repo "$WORK_DIR" "$COMPOSE_PATH"
