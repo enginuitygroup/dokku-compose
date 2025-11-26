@@ -13,5 +13,5 @@ cmd-compose-set-compose-path() {
   declare COMPOSE_PATH="$2"
 
   verify_app_name "$APP"
-  config_set --no-restart $APP DOKKU_COMPOSE_PATH=$COMPOSE_PATH
+  fn-plugin-property-write "compose" "$APP" "$COMPOSE_PATH"
 }
