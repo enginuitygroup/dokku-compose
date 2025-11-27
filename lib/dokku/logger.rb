@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "./common"
+require "logger"
 
 module Dokku
   class Logger < ::Logger
