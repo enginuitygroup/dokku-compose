@@ -1,11 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require "bundler/inline"
-
 require "yaml"
 require "json"
-require "debug"
+require_relative "../lib/dokku/logger"
 
 class DokkuAppJsonGenerator
   def self.call(...)
@@ -23,7 +21,7 @@ class DokkuAppJsonGenerator
     end
 
     if app_json_contents.empty?
-      puts "--> No usable app.json built from #{compose_file_path}, skipping..."
+      logger.info "No usable app.json built from #{compose_file_path}, skipping..."
     else
       File.write(output_path, JSON.dump(app_json_contents))
     end
@@ -33,6 +31,8 @@ class DokkuAppJsonGenerator
   private def configure_healthchecks(app_json, service_name, service_config)
     return app_json unless service_config.key?("healthcheck")
     
+    logger.debug "Configuring healthchecks for #{service_name}"
+
     app_json[:healthchecks] ||= {}
 
     app_json_service_config = {
@@ -53,7 +53,9 @@ class DokkuAppJsonGenerator
 
   private def configure_formation(app_json, service_name, service_config)
     return app_json unless service_config.key?("deploy")
-      
+
+    logger.debug "Configuration formation for #{service_name}"
+
     app_json[:formation] ||= {}
     
     app_json_service_config = {
@@ -63,6 +65,8 @@ class DokkuAppJsonGenerator
 
     app_json.merge(formation: app_json[:formation].merge(service_name => app_json_service_config))
   end
+
+  private def logger = @logger ||= Dokku::Logger.new
 end
 
 DokkuAppJsonGenerator.call(*ARGV)

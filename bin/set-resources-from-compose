@@ -2,6 +2,7 @@
 
 require "yaml"
 require_relative "../lib/dokku/common"
+require_relative "../lib/dokku/logger"
 
 class DokkuResourceSetter
   include Dokku::Common
@@ -28,14 +29,20 @@ class DokkuResourceSetter
     
     # Clear the resource if it's not specified in the compose file
     # but was previously set by the compose file.
-    common.property_delete("resource", app_name, property) if value.nil? && !set_by_compose.empty?
+    if value.nil? && !set_by_compose.empty?
+      logger.debug("Clearing #{property} for #{app_name}")
+      common.property_delete("resource", app_name, property) 
+    end
+      
 
     return if value.nil?
 
+    logger.debug("Setting #{app_name} #{property} to #{value}")
     common.property_write("resource", app_name, property, value)
   end
 
   private def property_key(process_type, resource_type, key) = "#{process_type}.#{resource_type}.#{key}"
+  private def logger = @logger ||= Dokku::Logger.new
 end
 
 DokkuResourceSetter.call(*ARGV)
