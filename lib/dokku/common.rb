@@ -6,7 +6,7 @@ module Dokku
     def self.plugin_available_path      = ENV['PLUGIN_AVAILABLE_PATH']
     def self.plugin_core_available_path = ENV['PLUGIN_CORE_AVAILABLE_PATH']
 
-    def self.inject_deps(deps, cmd, *args) = `bash -c 'source #{plugin_core_available_path}/#{deps} && #{cmd} #{args.join(" ")}'`
+    def self.inject_deps(deps, cmd, *args) = `bash -c 'source #{plugin_core_available_path}/common/#{deps} && #{cmd} #{args.join(" ")}'`
 
     ################################################################################
     # Property functions
