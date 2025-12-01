@@ -42,7 +42,7 @@ class DokkuResourceSetter
   end
 
   private def property_key(process_type, resource_type, key) = "#{process_type}.#{resource_type}.#{key}"
-  private def logger = @logger ||= Dokku::Logger.new
+  private def logger = @logger ||= Dokku::Logger.new(STDOUT)
 end
 
 DokkuResourceSetter.call(*ARGV)

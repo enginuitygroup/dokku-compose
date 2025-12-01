@@ -6,7 +6,7 @@ require_relative "../lib/dokku/logger"
 
 class DokkuProcfileGenerator
   def self.call(compose_file_path, output_path = "Procfile")
-    logger = Dokku::Logger.new
+    logger = Dokku::Logger.new(STDOUT)
 
     compose_config = YAML.load(File.read(compose_file_path))
 

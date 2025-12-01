@@ -11,6 +11,7 @@ sudo dokku plugin:install https://github.com/enginuitygroup/dokku-compose.git
 ## Commands
 ```
 compose:set-compose-path (<app>|--global) PATH # Sets the path to the Compose file
+compose:report <app> # Shows configuration details for an app
 ```
 
 ## Usage
