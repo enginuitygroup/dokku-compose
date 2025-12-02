@@ -12,9 +12,9 @@ trigger-compose-pre-build() {
   COMPOSE_PATH=$(fn-find-compose-path "$APP")
 
   if [[ "$SOURCE_IMAGE" != "" ]]; then
-    fn-compose-from-image "$WORK_DIR" "$SOURCE_IMAGE" "$COMPOSE_PATH"
+    fn-compose-from-image "$APP" "$WORK_DIR" "$SOURCE_IMAGE" "$COMPOSE_PATH"
   else
-    fn-compose-from-repo "$WORK_DIR" "$WORK_DIR/$COMPOSE_PATH"
+    fn-compose-from-repo "$APP" "$WORK_DIR" "$WORK_DIR/$COMPOSE_PATH"
   fi
 }
 
