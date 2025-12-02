@@ -38,6 +38,8 @@ fn-compose-from-image() {
 
   "$DOCKER_BIN" run --rm "$SOURCE_IMAGE" cat "$COMPOSE_PATH" > "$WORK_COMPOSE_PATH"
   
+  [[ "$?" != "0" ]] && dokku_log_info1_quiet "Failed to fetch compose file; no app.json or Procfile will be generated"
+  
   fn-compose-from-repo "$WORK_DIR" "$WORK_COMPOSE_PATH"
 
   # TODO: What if there's already an app.json and Procfile in the image?
