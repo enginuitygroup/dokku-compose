@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+source "$PLUGIN_AVAILABLE_PATH/compose/internal-functions"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/property-functions"
+
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+
+trigger-compose-pre-build() {
+  declare BUILDER_TYPE="$1" APP="$2" WORK_DIR="$3"
+  SOURCE_IMAGE=$(fn-plugin-property-get "git" "$APP" "source-image")
+  COMPOSE_PATH=$(fn-find-compose-path "$APP")
+
+  if [[ "$SOURCE_IMAGE" != "" ]]; then
+    fn-compose-from-image "$WORK_DIR" "$SOURCE_IMAGE" "$COMPOSE_PATH"
+  else
+    fn-compose-from-repo "$WORK_DIR" "$WORK_DIR/$COMPOSE_PATH"
+  fi
+}
