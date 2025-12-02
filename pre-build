@@ -17,3 +17,5 @@ trigger-compose-pre-build() {
     fn-compose-from-repo "$WORK_DIR" "$WORK_DIR/$COMPOSE_PATH"
   fi
 }
+
+trigger-compose-pre-build "$@"
