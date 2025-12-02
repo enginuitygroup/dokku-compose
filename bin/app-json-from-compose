@@ -61,7 +61,7 @@ class DokkuAppJsonGenerator
     app_json_service_config = {
       quantity:     service_config.dig("deploy", "replicas"),
       max_parallel: service_config.dig("deploy", "update_config", "parallelism")
-    }
+    }.compact
 
     app_json.merge(formation: app_json[:formation].merge(service_name => app_json_service_config))
   end
